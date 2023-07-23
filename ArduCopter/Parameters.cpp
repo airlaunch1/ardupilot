@@ -1160,6 +1160,27 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     AP_GROUPINFO("TKOFF_RPM_MIN", 58, ParametersG2, takeoff_rpm_min, 0),
 #endif
 
+    // @Param: LB_DETECT_MS
+    // @DisplayName: Delays in thow detection
+    // @Description: Nope
+    // @Values: 0-10000
+    // @User: Standard
+    AP_GROUPINFO("LB_DETECT_MS", 59, ParametersG2, lb_detect_ms, 100),
+
+    // @Param: LB_UPRIGHT_MS
+    // @DisplayName: Delay in upright checks
+    // @Description: Nope
+    // @Values: 0-10000
+    // @User: Standard
+    AP_GROUPINFO("LB_UPRIGHT_MS", 60, ParametersG2, lb_upright_ms, 15),
+
+    // @Param: LB_HEIGHT_MS
+    // @DisplayName: Delay in stabilization checks
+    // @Description: Nope
+    // @Values: 0-10000
+    // @User: Standard
+    AP_GROUPINFO("LB_HEIGHT_MS", 61, ParametersG2, lb_height_ms, 100),
+
     // ID 62 is reserved for the SHOW_... parameters from the Skybrush fork at
     // https://github.com/skybrush-io/ardupilot
 

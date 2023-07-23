@@ -1570,8 +1570,9 @@ public:
     bool init(bool ignore_checks) override;
     void run() override;
 
-    bool requires_GPS() const override { return true; }
-    bool has_manual_throttle() const override { return false; }
+    // These where changed to reduce the number of arming checks while falling
+    bool requires_GPS() const override { return false; }
+    bool has_manual_throttle() const override { return true; }
     bool allows_arming(AP_Arming::Method method) const override { return true; };
     bool is_autopilot() const override { return false; }
 
@@ -1596,7 +1597,7 @@ private:
     bool throw_detected();
     bool throw_position_good() const;
     bool throw_height_good() const;
-    bool throw_attitude_good() const;
+    bool throw_attitude_good();
 
     // Throw stages
     enum ThrowModeStage {
@@ -1614,6 +1615,9 @@ private:
     bool nextmode_attempted;
     uint32_t free_fall_start_ms;    // system time free fall was detected
     float free_fall_start_velz;     // vertical velocity when free fall was detected
+    uint32_t detect_start_ms;
+    uint32_t upright_start_ms;
+    uint32_t height_start_ms;
 };
 
 #if MODE_TURTLE_ENABLED == ENABLED
