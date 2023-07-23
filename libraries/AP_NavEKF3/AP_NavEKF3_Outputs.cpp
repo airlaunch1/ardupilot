@@ -6,25 +6,41 @@
 #include <GCS_MAVLink/GCS.h>
 
 // Check basic filter health metrics and return a consolidated health status
-bool NavEKF3_core::healthy(void) const
+bool NavEKF3_core::healthy(bool force_flying) const
 {
     uint16_t faultInt;
     getFilterFaults(faultInt);
     if (faultInt > 0) {
+        if (force_flying) {
+            gcs().send_text(MAV_SEVERITY_INFO,"Core Healthy Check Bypassed: Fault INT");
+            return true;
+        }
         return false;
     }
     if (velTestRatio > 1 && posTestRatio > 1 && hgtTestRatio > 1) {
         // all three metrics being above 1 means the filter is
         // extremely unhealthy.
+        if (force_flying) {
+            gcs().send_text(MAV_SEVERITY_INFO,"Core Healthy Check Bypassed: Test Ratios above 1");
+            return true;
+        }
         return false;
     }
     // Give the filter a second to settle before use
     if ((imuSampleTime_ms - ekfStartTime_ms) < 1000 ) {
+        if (force_flying) {
+            gcs().send_text(MAV_SEVERITY_INFO,"Core Healthy Check Bypassed: Not settled");
+            return true;
+        }
         return false;
     }
     // position and height innovations must be within limits when on-ground and in a static mode of operation
     float horizErrSq = sq(innovVelPos[3]) + sq(innovVelPos[4]);
     if (onGround && (PV_AidingMode == AID_NONE) && ((horizErrSq > 1.0f) || (fabsF(hgtInnovFiltState) > 1.0f))) {
+        if (force_flying) {
+            gcs().send_text(MAV_SEVERITY_INFO,"Core Healthy Check Bypassed: On Ground Innovations above 1");
+            return true;
+        }
         return false;
     }
 

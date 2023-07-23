@@ -127,7 +127,7 @@ public:
     void UpdateFilter(bool predict);
 
     // Check basic filter health metrics and return a consolidated health status
-    bool healthy(void) const;
+    bool healthy(bool force_flying = false) const;
 
     // Return a consolidated error score where higher numbers are less healthy
     // Intended to be used by the front-end to determine which is the primary EKF

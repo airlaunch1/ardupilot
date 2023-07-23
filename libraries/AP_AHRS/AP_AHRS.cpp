@@ -2003,7 +2003,7 @@ bool AP_AHRS::get_secondary_EKF_type(EKFType &secondary_ekf_type) const
 /*
   check if the AHRS subsystem is healthy
 */
-bool AP_AHRS::healthy(void) const
+bool AP_AHRS::healthy(bool force_flying) const
 {
     // If EKF is started we switch away if it reports unhealthy. This could be due to bad
     // sensor data. If EKF reversion is inhibited, we only switch across if the EKF encounters
@@ -2031,7 +2031,7 @@ bool AP_AHRS::healthy(void) const
 
 #if HAL_NAVEKF3_AVAILABLE
     case EKFType::THREE: {
-        bool ret = _ekf3_started && EKF3.healthy();
+        bool ret = _ekf3_started && EKF3.healthy(force_flying);
         if (!ret) {
             return false;
         }
@@ -2061,10 +2061,10 @@ bool AP_AHRS::healthy(void) const
 
 // returns false if we fail arming checks, in which case the buffer will be populated with a failure message
 // requires_position should be true if horizontal position configuration should be checked
-bool AP_AHRS::pre_arm_check(bool requires_position, char *failure_msg, uint8_t failure_msg_len) const
+bool AP_AHRS::pre_arm_check(bool requires_position, char *failure_msg, uint8_t failure_msg_len, bool force_flying) const
 {
     bool ret = true;
-    if (!healthy()) {
+    if (!healthy(force_flying)) {
         // this rather generic failure might be overwritten by
         // something more specific in the "backend"
         hal.util->snprintf(failure_msg, failure_msg_len, "Not healthy");
@@ -2109,7 +2109,7 @@ bool AP_AHRS::pre_arm_check(bool requires_position, char *failure_msg, uint8_t f
             hal.util->snprintf(failure_msg, failure_msg_len, "EKF3 not started");
             return false;
         }
-        return EKF3.pre_arm_check(requires_position, failure_msg, failure_msg_len) && ret;
+        return EKF3.pre_arm_check(requires_position, failure_msg, failure_msg_len,force_flying) && ret;
 #endif
     }
 

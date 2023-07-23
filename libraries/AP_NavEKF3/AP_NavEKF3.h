@@ -53,11 +53,11 @@ public:
     void UpdateFilter(void);
 
     // Check basic filter health metrics and return a consolidated health status
-    bool healthy(void) const;
+    bool healthy(bool force_flying = false) const;
 
     // returns false if we fail arming checks, in which case the buffer will be populated with a failure message
     // requires_position should be true if horizontal position configuration should be checked
-    bool pre_arm_check(bool requires_position, char *failure_msg, uint8_t failure_msg_len) const;
+    bool pre_arm_check(bool requires_position, char *failure_msg, uint8_t failure_msg_len, bool force_flying = false) const;
 
     // returns the index of the primary core
     // return -1 if no primary core selected

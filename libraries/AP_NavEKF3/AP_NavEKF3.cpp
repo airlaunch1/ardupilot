@@ -1107,17 +1107,17 @@ void NavEKF3::setPosVelYawSourceSet(uint8_t source_set_idx)
 }
 
 // Check basic filter health metrics and return a consolidated health status
-bool NavEKF3::healthy(void) const
+bool NavEKF3::healthy(bool force_flying) const
 {
     if (!core) {
         return false;
     }
-    return core[primary].healthy();
+    return core[primary].healthy(force_flying);
 }
 
 // returns false if we fail arming checks, in which case the buffer will be populated with a failure message
 // requires_position should be true if horizontal position configuration should be checked
-bool NavEKF3::pre_arm_check(bool requires_position, char *failure_msg, uint8_t failure_msg_len) const
+bool NavEKF3::pre_arm_check(bool requires_position, char *failure_msg, uint8_t failure_msg_len, bool force_flying) const
 {
     // check source configuration
     if (!sources.pre_arm_check(requires_position, failure_msg, failure_msg_len)) {
@@ -1138,7 +1138,7 @@ bool NavEKF3::pre_arm_check(bool requires_position, char *failure_msg, uint8_t f
         return false;
     }
     for (uint8_t i = 0; i < num_cores; i++) {
-        if (!core[i].healthy()) {
+        if (!core[i].healthy(force_flying)) {
             const char *failure = core[primary].prearm_failure_reason();
             if (failure != nullptr) {
                 AP::dal().snprintf(failure_msg, failure_msg_len, failure);

@@ -258,11 +258,11 @@ public:
     float getControlScaleZ(void) const;
 
     // is the AHRS subsystem healthy?
-    bool healthy() const;
+    bool healthy(bool force_flying = false) const;
 
     // returns false if we fail arming checks, in which case the buffer will be populated with a failure message
     // requires_position should be true if horizontal position configuration should be checked
-    bool pre_arm_check(bool requires_position, char *failure_msg, uint8_t failure_msg_len) const;
+    bool pre_arm_check(bool requires_position, char *failure_msg, uint8_t failure_msg_len, bool force_flying = false) const;
 
     // true if the AHRS has completed initialisation
     bool initialised() const;
